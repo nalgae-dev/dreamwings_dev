@@ -1,5 +1,5 @@
 Ext.application({
-  name: 'GoldWings',
+  name: 'DreamNalgae',
 
   launch: function () {
     function handleLogin(panel) {
@@ -33,7 +33,7 @@ Ext.application({
           width: 350,
           bodyPadding: 30,
           layout: 'anchor',
-          title: '<div style="text-align:center;font-size:20px;">GoldWings 로그인</div>',
+          title: '<div style="text-align:center;font-size:20px;">DreamNalgae 로그인</div>',
           style: {
             backgroundColor: 'white',
             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',

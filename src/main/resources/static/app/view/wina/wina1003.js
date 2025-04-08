@@ -1,4 +1,4 @@
-Ext.define('GoldWings.view.wina.wina1003', {
+Ext.define('DreamNalgae.view.wina.wina1003', {
     extend: 'Ext.panel.Panel',
     xtype: 'wina1003',
     layout: 'fit',

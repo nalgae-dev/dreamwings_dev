@@ -1,4 +1,4 @@
-Ext.define('GoldWings.view.oman.oman1001', {
+Ext.define('DreamNalgae.view.oman.oman1001', {
     extend: 'Ext.panel.Panel',
     xtype: 'oman1002',
     layout: 'fit',

@@ -1,4 +1,4 @@
-Ext.define('GoldWings.view.main.MainFrame', {
+Ext.define('DreamNalgae.view.main.MainFrame', {
   extend: 'Ext.container.Viewport',
   layout: 'border',
 
@@ -23,7 +23,7 @@ Ext.define('GoldWings.view.main.MainFrame', {
             },
             {
               xtype: 'component',
-              html: '<span style="font-size:18px; font-weight:bold;">GoldWings 시스템</span>',
+              html: '<span style="font-size:18px; font-weight:bold;">DreamNalgae 시스템</span>',
               style: 'color:white; margin-top: 10px;'
             }
           ]

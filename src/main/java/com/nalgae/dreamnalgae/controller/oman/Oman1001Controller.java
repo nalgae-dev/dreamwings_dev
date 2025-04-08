@@ -1,10 +1,10 @@
-package com.nalgae.goldwings.controller.oman;
+package com.nalgae.dreamnalgae.controller.oman;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nalgae.goldwings.entity.oman.User;
-import com.nalgae.goldwings.service.oman.Oman1001Service;
+import com.nalgae.dreamnalgae.entity.oman.User;
+import com.nalgae.dreamnalgae.service.oman.Oman1001Service;
 
 import lombok.RequiredArgsConstructor;
 

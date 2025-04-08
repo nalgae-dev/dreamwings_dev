@@ -6,8 +6,8 @@ function loadProgram(menuId) {
     const folder = lowerId.substring(0, 4); // wina
     const scriptPath = `/app/view/${folder}/${lowerId}.js`;
   
-    // 컴포넌트 이름 예: GoldWings.view.wina.wina1003
-    const className = `GoldWings.view.${folder}.${lowerId}`;
+    // 컴포넌트 이름 예: DreamNalgae.view.wina.wina1003
+    const className = `DreamNalgae.view.${folder}.${lowerId}`;
 
     contentPanel.removeAll(true);
     // 이미 정의된 경우에는 바로 생성

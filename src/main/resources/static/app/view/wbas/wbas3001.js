@@ -1,4 +1,4 @@
-Ext.define('GoldWings.view.wbas.wbas3001', {
+Ext.define('DreamNalgae.view.wbas.wbas3001', {
   extend: 'Ext.grid.Panel',
   xtype: 'wbas3001',
 
@@ -26,7 +26,7 @@ Ext.define('GoldWings.view.wbas.wbas3001', {
     {
       text: '도서 등록',
       handler: function () {
-        Ext.create('GoldWings.view.wbas.BookForm').show();
+        Ext.create('DreamNalgae.view.wbas.BookForm').show();
       }
     },
     {
@@ -34,7 +34,7 @@ Ext.define('GoldWings.view.wbas.wbas3001', {
       handler: function (btn) {
         const rec = btn.up('grid').getSelection()[0];
         if (rec) {
-          const win = Ext.create('GoldWings.view.wbas.BookForm');
+          const win = Ext.create('DreamNalgae.view.wbas.BookForm');
           win.down('form').loadRecord(rec);
           win.show();
         }

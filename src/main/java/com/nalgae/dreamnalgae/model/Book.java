@@ -1,4 +1,4 @@
-package com.nalgae.goldwings.model;
+package com.nalgae.dreamnalgae.model;
 
 import jakarta.persistence.*;
 

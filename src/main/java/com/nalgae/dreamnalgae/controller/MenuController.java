@@ -1,10 +1,10 @@
-package com.nalgae.goldwings.controller;
+package com.nalgae.dreamnalgae.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nalgae.goldwings.entity.Menu;
-import com.nalgae.goldwings.service.MenuService;
+import com.nalgae.dreamnalgae.entity.Menu;
+import com.nalgae.dreamnalgae.service.MenuService;
 
 import lombok.RequiredArgsConstructor;
 

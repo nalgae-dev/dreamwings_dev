@@ -1,4 +1,4 @@
-package com.nalgae.goldwings.entity;
+package com.nalgae.dreamnalgae.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

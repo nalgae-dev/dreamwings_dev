@@ -1,11 +1,11 @@
-package com.nalgae.goldwings.service.oman;
+package com.nalgae.dreamnalgae.service.oman;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.nalgae.goldwings.entity.oman.User;
-import com.nalgae.goldwings.repository.oman.Oman1001Repository;
+import com.nalgae.dreamnalgae.entity.oman.User;
+import com.nalgae.dreamnalgae.repository.oman.Oman1001Repository;
 
 import lombok.RequiredArgsConstructor;
 
