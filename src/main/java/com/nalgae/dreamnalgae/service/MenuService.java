@@ -1,12 +1,12 @@
-package com.nalgae.goldwings.service;
+package com.nalgae.dreamnalgae.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.nalgae.goldwings.entity.Menu;
-import com.nalgae.goldwings.repository.MenuRepository;
+import com.nalgae.dreamnalgae.entity.Menu;
+import com.nalgae.dreamnalgae.repository.MenuRepository;
 
 import lombok.RequiredArgsConstructor;
 

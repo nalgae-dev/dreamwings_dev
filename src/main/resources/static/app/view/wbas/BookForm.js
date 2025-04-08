@@ -1,4 +1,4 @@
-Ext.define('GoldWings.view.wbas.BookForm', {
+Ext.define('DreamNalgae.view.wbas.BookForm', {
   extend: 'Ext.window.Window',
   xtype: 'bookform',
   title: '도서 등록/수정',

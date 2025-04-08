@@ -1,7 +1,7 @@
-package com.nalgae.goldwings.service;
+package com.nalgae.dreamnalgae.service;
 
-import com.nalgae.goldwings.model.Book;
-import com.nalgae.goldwings.repository.BookRepository;
+import com.nalgae.dreamnalgae.model.Book;
+import com.nalgae.dreamnalgae.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

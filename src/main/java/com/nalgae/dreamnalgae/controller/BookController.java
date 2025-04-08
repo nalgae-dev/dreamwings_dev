@@ -1,7 +1,7 @@
-package com.nalgae.goldwings.controller;
+package com.nalgae.dreamnalgae.controller;
 
-import com.nalgae.goldwings.model.Book;
-import com.nalgae.goldwings.service.BookService;
+import com.nalgae.dreamnalgae.model.Book;
+import com.nalgae.dreamnalgae.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
