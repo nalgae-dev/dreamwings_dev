@@ -21,6 +21,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class MenuController {
     private final MenuService menuService;
 
+    @GetMapping("/tree")
+    public List<Menu> getMenuTree() {
+        return menuService.getMenuTree();
+    }
+
     @GetMapping("/tab")
     public List<Menu> getTopMenus() {
         return menuService.getTopMenus();

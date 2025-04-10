@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "TB_MENU_M")
@@ -74,4 +75,18 @@ public class Menu {
 
     // @Column(name = "XTYPE")
     // private String xtype;
+
+    @Transient
+    private List<Menu> children;
+
+    @Transient
+    public boolean isLeaf() {
+        return children == null || children.isEmpty();
+    }
+
+    @Transient
+    public boolean isExpanded() {
+        return true;
+    }
+
 }
