@@ -23,7 +23,7 @@ Ext.define('DreamNalgae.view.main.MainFrame', {
             },
             {
               xtype: 'component',
-              html: '<span style="font-size:18px; font-weight:bold;">DreamNalgae 시스템</span>',
+              html: '<span style="font-size:18px; font-weight:bold;">드림날개</span>',
               style: 'color:white; margin-top: 10px;'
             }
           ]
@@ -32,7 +32,7 @@ Ext.define('DreamNalgae.view.main.MainFrame', {
         {
           xtype: 'tbtext',
           itemId: 'userName',
-          html: '<i class="fas fa-user-circle"></i> 드림날개님',
+          html: '<i class="fas fa-user-circle"></i> 아무개님',
           style: 'color:white; font-size:14px; margin-right:15px;'
         },
         {
