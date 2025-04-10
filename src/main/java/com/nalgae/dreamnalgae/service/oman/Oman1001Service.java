@@ -18,4 +18,9 @@ public class Oman1001Service {
     public List<User> getAllUsers() {
         return oman1001Repository.findAll(); // 전체 사용자 목록 조회
     }
+
+    public List<Object[]> getUsersWithRegisterName() {
+        return oman1001Repository.findUsersWithRegisterName();
+    }
+
 }
