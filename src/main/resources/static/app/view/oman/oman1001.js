@@ -7,6 +7,34 @@ Ext.define('DreamNalgae.view.oman.oman1001', {
     },
 
     controller: {
+        onPopupMenu: function (grid, record, item, index, e) {
+            e.stopEvent();
+
+            const menu = Ext.create('Ext.menu.Menu',{
+                items:[
+                        {
+                            text:'수정',
+                            handler:()=>{
+                                console.log('수정 로직 실행');
+                            }
+                        },
+                        {
+                            text:'삭제',
+                            handler:()=>{
+                                Ext.Msg.confirm('삭제 확인', '정말로 삭제하시겠습니까?', function (btn) {
+                                    if (btn === 'yes') {
+                                        // 삭제로직
+                                        console.log('삭제 로직 실행');
+                                    }
+                                });
+                            }
+                        }
+                    ]
+            });
+
+            menu.showAt(e.getXY());
+
+        },
         onSearch: function () {
             const view = this.getView();
             const nameField = view.lookupReference('userNmField');
@@ -73,7 +101,8 @@ Ext.define('DreamNalgae.view.oman.oman1001', {
                 { text: '직급', dataIndex: 'posiNm', flex: 1 }
             ],
             listeners: {
-                select: 'onUserSelect'
+                select: 'onUserSelect',
+                itemcontextmenu:'onPopupMenu'
             }
         },
         {
