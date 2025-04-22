@@ -68,7 +68,10 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
         {
           region: 'center',
           xtype: 'panel',
-          layout: 'fit',
+          layout: {
+            type:'vbox',
+            align:'stretch'
+          },
           items:[
             {
                 xtype: 'form',
@@ -105,6 +108,25 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                     { fieldLabel: '저자명', name: 'author' },
                 ]
             },
+            {
+                xtype: 'form',
+                reference: 'userForm',
+                title: '사용자 상세정보',
+                bodyPadding: 10,
+                defaults: {
+                    anchor: '100%',
+                    labelWidth: 100
+                },
+                items: [
+                    { xtype: 'textfield', name: 'userId', fieldLabel: '사용자 ID', readOnly: true },
+                    { xtype: 'textfield', name: 'userNm', fieldLabel: '이름' },
+                    { xtype: 'textfield', name: 'emailAddr', fieldLabel: '이메일' },
+                    { xtype: 'textfield', name: 'telNo', fieldLabel: '전화번호' },
+                    { xtype: 'textfield', name: 'partCd', fieldLabel: '부서코드' },
+                    { xtype: 'textfield', name: 'posiNm', fieldLabel: '직급' }
+                ]
+            }
+        
           ]
         }
       ]
