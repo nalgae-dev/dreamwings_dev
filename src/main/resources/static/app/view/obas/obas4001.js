@@ -64,13 +64,47 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             { text: '저자', dataIndex: 'author', flex: 2 },
             { text: '수량', dataIndex: 'quantity', flex: 1 }
           ]
-        },
+        }, // west 영역 끝
         {
           region: 'center',
           xtype: 'panel',
-          layout: 'hbox',
+          layout: 'fit',
           items:[
-            
+            {
+                xtype: 'form',
+                title: '기본정보',
+                layout: {
+                    type: 'table',
+                    columns: 5
+                },
+                defaults: {
+                    xtype: 'textfield',
+                    width: 180,
+                    margin: '5 10'
+                },
+                items: [
+                    { fieldLabel: '도서코드', name: 'bookCode' },
+                    { fieldLabel: '도서명', name: 'bookName' },
+                    { fieldLabel: '출판사', name: 'publisher' },
+                    { fieldLabel: '저자명', name: 'author' },
+                    { fieldLabel: '도서코드', name: 'bookCode' },
+                    { fieldLabel: '도서명', name: 'bookName' },
+                    { fieldLabel: '출판사', name: 'publisher' },
+                    { fieldLabel: '저자명', name: 'author' },
+                    { fieldLabel: '도서코드', name: 'bookCode' },
+                    { fieldLabel: '도서명', name: 'bookName' },
+                    { fieldLabel: '출판사', name: 'publisher' },
+                    { fieldLabel: '저자명', name: 'author' },
+                    { fieldLabel: '도서코드', name: 'bookCode' },
+                    { fieldLabel: '도서명', name: 'bookName' },
+                    { fieldLabel: '출판사', name: 'publisher' },
+                    { fieldLabel: '저자명', name: 'author' },
+                    { fieldLabel: '도서코드', name: 'bookCode' },
+                    { fieldLabel: '도서명', name: 'bookName' },
+                    { fieldLabel: '출판사', name: 'publisher' },
+                    { fieldLabel: '저자명', name: 'author' },
+                ]
+            },
           ]
         }
       ]
