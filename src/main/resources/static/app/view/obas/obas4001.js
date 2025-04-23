@@ -68,6 +68,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
         {
           region: 'center',
           xtype: 'panel',
+          scrollable: 'vertical',
           layout: {
             type:'vbox',
             align:'stretch'
@@ -125,8 +126,41 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                     { xtype: 'textfield', name: 'partCd', fieldLabel: '부서코드' },
                     { xtype: 'textfield', name: 'posiNm', fieldLabel: '직급' }
                 ]
+            },
+            {
+              xtype: 'form',
+              reference: 'basicInfo',
+              bodyPadding: 10,
+              title: '차량 주유내역',
+              items:[   
+                { xtype: 'textfield', name: '', fieldLabel: '정보1', readOnly: true },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' },
+                { xtype: 'textfield', name: '', fieldLabel: '정보1' }
+              ]
             }
-        
           ]
         }
       ]
