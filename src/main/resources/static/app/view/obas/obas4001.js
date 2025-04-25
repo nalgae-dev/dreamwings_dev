@@ -12,7 +12,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
           xtype: 'grid',
           width: 400,
           //title: '입고 확인 조회',
-          reference: 'bookGrid',  // 참조용 id 설정 (선택 사항)
+          reference: 'carGrid',  // 참조용 id 설정 (선택 사항)
           tbar: [
             {
               xtype: 'textfield',
@@ -29,12 +29,12 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
               iconCls: 'x-fa fa-search',
               handler: function (btn) {
                 const grid = btn.up('grid');
-                const value = grid.down('#searchField').getValue().toLowerCase();
+                const value = grid.down('#searchField').getValue();
                 const store = grid.getStore();
                 store.clearFilter();
                 if (value) {
                   store.filterBy(record => {
-                    return record.get('title').toLowerCase().includes(value);
+                    return record.get('carRegnum').includes(value);
                   });
                 }
               }
@@ -51,18 +51,18 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             }
           ],
           store: {
-            fields: ['bookId', 'title', 'author', 'quantity'],
-            data: [
-              { bookId: 'B001', title: '자바의 정석', author: '남궁성', quantity: 10 },
-              { bookId: 'B002', title: '스프링 인 액션', author: '크레이그 월즈', quantity: 5 },
-              { bookId: 'B003', title: '클린 코드', author: '로버트 마틴', quantity: 7 }
-            ]
+            autoLoad: true,
+            fields: ['carRegnum', 'repairDriver', 'carNm'],
+            proxy: {
+              type: 'ajax',
+              url:'/obas/carlist',
+              reader: { type: 'json'}
+            }
           },
           columns: [
-            { text: '도서 ID', dataIndex: 'bookId', flex: 1 },
-            { text: '제목', dataIndex: 'title', flex: 2 },
-            { text: '저자', dataIndex: 'author', flex: 2 },
-            { text: '수량', dataIndex: 'quantity', flex: 1 }
+            { text: '차량번호', dataIndex: 'carRegnum', flex: 2 },
+            { text: '운전자', dataIndex: 'repairDriver', flex: 1 },
+            { text: '차명', dataIndex: 'carNm', flex: 2 },
           ]
         }, // west 영역 끝
         {
@@ -76,7 +76,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
           items:[
             {
                 xtype: 'form',
-                title: '기본정보',
+                title: '차량량기본정보',
                 layout: {
                     type: 'table',
                     columns: 5
