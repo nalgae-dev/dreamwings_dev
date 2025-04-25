@@ -172,6 +172,7 @@ Ext.define('DreamNalgae.view.main.MainFrame', {
                     url: `/api/menu/sub/${menu.menuId}`,
                     success: function (res) {
                       const subMenus = Ext.decode(res.responseText);
+                      console.log(subMenus);
                       const level2Menus = subMenus.filter(m => m.menuLevel === 2);
                       const treeRoot = {
                         expanded: true,
