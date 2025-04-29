@@ -7,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarListDto {
-    private String centerCd;
-    private String carCd;
-    private String carRegnum;
-    private String repairDriver;
-    private String carNm;
-    
+public class OilMonthData {
+    private int month;     // 1~12
+    private int litter;    // 주유량
+    private int money;     // 주유금액
 }
