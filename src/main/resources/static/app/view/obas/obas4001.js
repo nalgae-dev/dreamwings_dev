@@ -75,9 +75,25 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
               carForm.getForm().setValues(data.carInfo);
             }
 
-            const oilGrid = view.lookupReference('oilGrid');
-            if (oilGrid && data.oilList) {
-              oilGrid.getStore().loadData(data.oilList);
+            // const oilGrid = view.lookupReference('oilGrid');
+            // if (oilGrid && data.oilList) {
+            //   oilGrid.getStore().loadData(data.oilList);
+            // }
+
+            // 주유내역 폼(oilForm) 채우기
+            const oilForm = view.lookupReference('oilForm');
+            if (oilForm && data.oilData) {
+
+              const values = {};
+              // 1월 ~ 12월 반복
+              for (let i = 1; i <= 12; i++) {
+                values[`oilLitter${i}`] = data.oilData[`oilLitter${i}`] != null ? data.oilData[`oilLitter${i}`] : 0;
+                values[`oilMoney${i}`] = data.oilData[`oilMoney${i}`] != null ? data.oilData[`oilMoney${i}`] : 0;
+              }
+
+              oilForm.getForm().setValues(values);
+            } else {
+              oilForm.reset();
             }
 
             const repairForm = view.lookupReference('repairForm');
@@ -145,8 +161,43 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             Ext.Msg.alert('오류', '수리내역 저장 실패');
           }
         });
-      }
+      },
+
+      onSaveOil: function(btn) {
+        const view = this.getView();
+        const form = view.lookupReference('oilForm');
+
+        if (!form.isValid) {
+          Ext.Msg.alert('오류', '입력값을 확인해주세요.');
+          return;
+        }
+
+        const values = form.getValues();
+        
+        const payload = {
+          id: {
+            centerCd: view.selectedCenterCd,
+            carCd: view.selectedCarCd,
+            oilYear: new Date().getFullYear().toString()
+          },
+          ...values // 월별 주유량, 금액 입력값 다 추가
+        };
       
+        Ext.Ajax.request({
+          url: '/obas/oil/save',
+          method: 'POST',
+          jsonData: payload,
+          success: function() {
+            Ext.Msg.alert('성공', '주유내역이 저장되었습니다.');
+          },
+          failure: function() {
+            Ext.Msg.alert('오류', '주유내역 저장 실패');
+          }
+        });
+      }
+
+
+
     },
   
     items: [
@@ -417,43 +468,55 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             
             // 차량 주유내역
             {
-              xtype: 'grid',
-              reference: 'oilGrid',
+              xtype: 'form',
+              reference: 'oilForm',
+              title: '주유내역',
               autoHeight: true,
-              title:'주유내역',
-              tbar:[
+              margin: '10 0',
+              layout: {
+                type: 'table',
+                columns: 6 // 🛑 6칸: 월/리터/금액 × 2세트(홀수/짝수)
+              },
+              defaults: {
+                xtype: 'textfield',
+                width: 120,
+                margin: '5 5 0 0',
+                labelAlign: 'top'
+              },
+              items: [
+                // 🧩 헤더
+                { xtype: 'displayfield', value: '월', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '주유량', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '월', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '주유량', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+            
+                // 🧩 1월 ~ 12월 나란히
+                ...Array.from({ length: 6 }, (_, idx) => {
+                  const oddMonth = idx * 2 + 1;  // 홀수 (1,3,5,7,9,11)
+                  const evenMonth = idx * 2 + 2; // 짝수 (2,4,6,8,10,12)
+            
+                  return [
+                    { xtype: 'displayfield', value: `${oddMonth}월`, width: 50, fieldStyle: 'text-align:center;' },
+                    { name: `oilLitter${oddMonth}` },
+                    { name: `oilMoney${oddMonth}` },
+                    { xtype: 'displayfield', value: `${evenMonth}월`, width: 50, fieldStyle: 'text-align:center;' },
+                    { name: `oilLitter${evenMonth}` },
+                    { name: `oilMoney${evenMonth}` }
+                  ];
+                }).flat()
+              ],
+              buttons: [
                 '->',
                 {
-                  xtype:'button',
-                  text:'수정',
-                  iconCls:'x-fa fa-edit',
-                  handler:'onUpdateOil'
+                  text: '주유내역 저장',
+                  iconCls: 'x-fa fa-save',
+                  handler: 'onSaveOil' // 🚀 저장용 핸들러
                 }
-              ],
-              plugins:{
-                ptype:'cellediting',
-                clicksToEdit: 1
-              },
-              columns: [
-                { text: '월', dataIndex: 'oddMonth', flex: 1 },
-                { text: '주유량(리터)', dataIndex: 'oddLitter', flex: 1, editor: 'textfield' },
-                { text: '주유금액', dataIndex: 'oddMoney', flex: 1, editor: 'textfield' },
-                { text: '월', dataIndex: 'evenMonth', flex: 1 },
-                { text: '주유량(리터)', dataIndex: 'evenLitter', flex: 1, editor: 'textfield' },
-                { text: '주유금액', dataIndex: 'evenMoney', flex: 1, editor: 'textfield' }
-              ],
-              store: {
-                fields: ['oddMonth', 'oddLitter', 'oddMoney', 'evenMonth', 'evenLitter', 'evenMoney'],
-                data: [
-                  { oddMonth: '1월', oddLitter: '10', oddMoney: '11', evenMonth: '2월', evenLitter: '2', evenMoney: '22' },
-                  { oddMonth: '3월', oddLitter: '0', oddMoney: '0', evenMonth: '4월', evenLitter: '0', evenMoney: '0' },
-                  { oddMonth: '5월', oddLitter: '0', oddMoney: '0', evenMonth: '6월', evenLitter: '0', evenMoney: '0' },
-                  { oddMonth: '7월', oddLitter: '0', oddMoney: '0', evenMonth: '8월', evenLitter: '0', evenMoney: '0' },
-                  { oddMonth: '9월', oddLitter: '0', oddMoney: '0', evenMonth: '10월', evenLitter: '0', evenMoney: '0' },
-                  { oddMonth: '11월', oddLitter: '0', oddMoney: '0', evenMonth: '12월', evenLitter: '0', evenMoney: '0' }
-                ]
-              }
+              ]
             },
+            
             
             
             // 차량 수리 내역

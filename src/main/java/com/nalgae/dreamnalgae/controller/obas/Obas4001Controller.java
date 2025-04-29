@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nalgae.dreamnalgae.entity.obas.RepairId;
+import com.nalgae.dreamnalgae.entity.obas.TmsOil;
 import com.nalgae.dreamnalgae.entity.obas.TmsRepair;
 import com.nalgae.dreamnalgae.model.obas.CarListDto;
+import com.nalgae.dreamnalgae.model.obas.OilSaveRequest;
 import com.nalgae.dreamnalgae.model.obas.OilupdateRequest;
 import com.nalgae.dreamnalgae.service.obas.Obas4001Service;
 
@@ -37,7 +38,7 @@ public class Obas4001Controller {
     public Map<String,Object> getCarDetail(@RequestParam String carCd) {
         Map<String, Object> result = new HashMap<>();
         result.put("carInfo", obas4001Service.getCarInfo(carCd)); 
-        // result.put("oilData", obas4001Service.getOilData(carCd));
+        result.put("oilData", obas4001Service.getOilInfo(carCd));
         result.put("repairData", obas4001Service.getRepairData(carCd));
         // result.put("accidentData", obas4001Service.getAccidentData(carCd));
         // result.put("taxData", obas4001Service.getTaxData(carCd));
@@ -46,21 +47,20 @@ public class Obas4001Controller {
     }
 
     // 주유내역 업데이트
-    @PostMapping("/oil/update")
-    public ResponseEntity<?> updateOil(@RequestBody OilupdateRequest request) {
+    @PostMapping("/oil/save")
+    public ResponseEntity<?> saveOil(@RequestBody TmsOil oil) {
         try {
-            obas4001Service.updateOil(request);
-            return ResponseEntity.ok("성공적으로 저장되었습니다.");
+            obas4001Service.oilSave(oil);
+            return ResponseEntity.ok("주유내역이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패: " + e.getMessage());
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주유내역 저장 실패: " + e.getMessage());
         }
     }
 
-    @GetMapping("/oil/info")
-    public ResponseEntity<?> getOilInfo(@RequestParam String centerCd,@RequestParam String carCd,@RequestParam String year) {
-        return ResponseEntity.ok(obas4001Service.getOil(centerCd,carCd,year));
-    }
+    // @GetMapping("/oil/info")
+    // public ResponseEntity<?> getOilInfo(@RequestParam String centerCd,@RequestParam String carCd,@RequestParam String year) {
+    //     return ResponseEntity.ok(obas4001Service.getOil(centerCd,carCd,year));
+    // }
 
     // 수리내역 업데이트
     @PostMapping("/repair/update")
