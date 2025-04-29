@@ -3,7 +3,150 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
     xtype: 'obas4001',
     layout: 'border',
     controller: {
+      onUpdateOil:function (btn) {
+        const grid = btn.up('grid');
+        const store = grid.getStore();
 
+        const oilData = [];
+
+        store.each(function (record) {
+          // 홀수월 추가
+          oilData.push({
+            month: parseInt(record.get('oddMonth')) || 0,
+            litter: parseInt(record.get('oddLitter')) || 0,
+            money: parseInt(record.get('oddMoney')) || 0
+          });
+    
+          // 짝수월 추가
+          oilData.push({
+            month: parseInt(record.get('evenMonth')) || 0,
+            litter: parseInt(record.get('evenLitter')) || 0,
+            money: parseInt(record.get('evenMoney')) || 0
+          });
+        });
+    
+        // 월이 0인 경우(예: evenMonth 없을 때) 제거
+        const filteredOilData = oilData.filter(item => item.month !== 0);
+    
+        console.log('보낼 oilData:', filteredOilData);
+
+        Ext.Ajax.request({
+          url:'/obas/oil/update',
+          method:'POST',
+          jsonData:{ 
+            centerCd:"C001", 
+            carCd:"CAR003",
+            oilYear:2025,
+            OilData:filteredOilData
+          },
+          success:function(response) {
+            Ext.Msg.alert('성공','수정이 완료되었습니다.');
+          },
+          failure:function(response){
+            Ext.Msg.alert('오류','수정에 실패했습니다.');
+          }
+        });
+
+      },
+
+      // 그리드 선택시 선택된 차량 정보 불러오기
+      onCarGridItemClick:function(grid,record){
+        const view = this.getView();
+        const carCd = record.get("carCd");
+        const centerCd = record.get("centerCd");
+
+        console.log(carCd);
+
+        if (!carCd) return;
+
+        // 선택된 차량 centerCd, carCd를 view에 저장
+        view.selectedCenterCd = centerCd;
+        view.selectedCarCd = carCd;
+
+        Ext.Ajax.request({
+          url: '/obas/car/detail?carCd=' + encodeURIComponent(carCd),
+          method: 'GET',
+          success: function (response) {
+            const data = Ext.decode(response.responseText);
+
+            // 차량 기본정보
+            const carForm = view.lookupReference('carInfoForm');
+            if (carForm && data.carInfo) {
+              carForm.getForm().setValues(data.carInfo);
+            }
+
+            const oilGrid = view.lookupReference('oilGrid');
+            if (oilGrid && data.oilList) {
+              oilGrid.getStore().loadData(data.oilList);
+            }
+
+            const repairForm = view.lookupReference('repairForm');
+            if (repairForm && data.repairData) {
+              const repairValues = {};
+
+              for (let i = 1; i <= 12; i++) {
+                repairValues[`repairRegDt${i}`] = data.repairData[`repairRegDt${i}`] || '';
+                repairValues[`repairDriver${i}`] = data.repairData[`repairDriver${i}`] || '';
+                repairValues[`repairSuri${i}`] = data.repairData[`repairSuri${i}`] || '';
+                repairValues[`repairDistance${i}`] = data.repairData[`repairDistance${i}`] || '';
+                repairValues[`repairMoney${i}`] = data.repairData[`repairMoney${i}`] || '';
+                repairValues[`repairBigo${i}`] = data.repairData[`repairBigo${i}`] || '';
+              }
+
+              repairForm.getForm().setValues(repairValues);
+            } else {
+              repairForm.reset();
+            }
+
+            const accidentGrid = view.lookupReference('accidentGrid');
+            if (accidentGrid && data.accidentList) {
+              accidentGrid.getStore().loadData(data.accidentList);
+            }
+
+            const taxGrid = view.lookupReference('taxGrid');
+            if (taxGrid && data.taxList) {
+              taxGrid.getStore().loadData(data.taxList);
+            }
+          },
+          failure: function () {
+            Ext.Msg.alert('오류', '차량 정보를 불러오는데 실패했습니다.');
+          }
+        });
+      },
+
+      // 차량 수리 내역 저장
+      onSaveRepair: function(btn) {
+        const view = this.getView();
+        const form = view.lookupReference('repairForm');
+
+        if (!form.isValid()) {
+          Ext.Msg.alert('오류', '입력값을 확인해주세요.');
+          return;
+        }
+
+        const values = form.getValues();
+        const payload = {
+          id:{
+            centerCd: view.selectedCenterCd, // 차량선택시 저장
+            carCd: view.selectedCarCd,
+            repairYear: new Date().getFullYear().toString()
+          },
+          ...values
+        };
+
+        Ext.Ajax.request({
+          url: '/obas/repair/update',
+          method: 'POST',
+          jsonData: payload,
+          success: function () {
+            Ext.Msg.alert('성공', '수리내역이 저장되었습니다.');
+          },
+          failure: function () {
+            Ext.Msg.alert('오류', '수리내역 저장 실패');
+          }
+        });
+      }
+      
     },
   
     items: [
@@ -52,14 +195,19 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
           ],
           store: {
             autoLoad: true,
-            fields: ['carRegnum', 'repairDriver', 'carNm'],
+            fields: ['centerCd','carCd','carRegnum', 'repairDriver', 'carNm'],
             proxy: {
               type: 'ajax',
               url:'/obas/carlist',
               reader: { type: 'json'}
             }
           },
+          listeners: {
+            itemclick: 'onCarGridItemClick'
+          },
           columns: [
+            { text: '센터코드', dataIndex: 'centerCd', hidden: true },
+            { text: '차량코드', dataIndex: 'carCd', hidden: true },
             { text: '차량번호', dataIndex: 'carRegnum', flex: 2 },
             { text: '운전자', dataIndex: 'repairDriver', flex: 1 },
             { text: '차명', dataIndex: 'carNm', flex: 2 },
@@ -87,6 +235,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                 // [1] 차량 기본정보
                 {
                   xtype: 'form',
+                  reference: 'carInfoForm',
                   layout: {
                     type: 'table',
                     columns: 3 // ▶️ 한 줄에 3개 항목씩 배치
@@ -268,96 +417,105 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             
             // 차량 주유내역
             {
-              xtype: 'fieldset',
-              title: '차량주유내역',
-              layout: {
-                type: 'hbox',
-                align: 'stretch'
-              },
-              padding: 10,
-              items: [
-                // 왼쪽 그리드: 홀수 월
+              xtype: 'grid',
+              reference: 'oilGrid',
+              autoHeight: true,
+              title:'주유내역',
+              tbar:[
+                '->',
                 {
-                  xtype: 'grid',
-                  //title: '홀수월 주유내역',
-                  flex: 1,
-                  autoHeight: true,
-                  margin: '0 10 0 0',
-                  columns: [
-                    { text: '월', dataIndex: 'month', flex: 1 },
-                    { text: '주유량(리터)', dataIndex: 'litter', flex: 1 },
-                    { text: '주유금액', dataIndex: 'money', flex: 1 }
-                  ],
-                  store: {
-                    fields: ['month', 'litter', 'money'],
-                    data: [
-                      { month: '1월', litter: '10리터', money: '11원' },
-                      { month: '3월', litter: '0리터', money: '0원' },
-                      { month: '5월', litter: '0리터', money: '0원' },
-                      { month: '7월', litter: '0리터', money: '0원' },
-                      { month: '9월', litter: '0리터', money: '0원' },
-                      { month: '11월', litter: '0리터', money: '0원' }
-                    ]
-                  }
-                },
-            
-                // 오른쪽 그리드: 짝수 월
-                {
-                  xtype: 'grid',
-                  //title: '짝수월 주유내역',
-                  flex: 1,
-                  autoHeight: true,
-                  columns: [
-                    { text: '월', dataIndex: 'month', flex: 1 },
-                    { text: '주유량(리터)', dataIndex: 'litter', flex: 1 },
-                    { text: '주유금액', dataIndex: 'money', flex: 1 }
-                  ],
-                  store: {
-                    fields: ['month', 'litter', 'money'],
-                    data: [
-                      { month: '2월', litter: '2리터', money: '22원' },
-                      { month: '4월', litter: '0리터', money: '0원' },
-                      { month: '6월', litter: '0리터', money: '0원' },
-                      { month: '8월', litter: '0리터', money: '0원' },
-                      { month: '10월', litter: '0리터', money: '0원' },
-                      { month: '12월', litter: '0리터', money: '0원' }
-                    ]
-                  }
+                  xtype:'button',
+                  text:'수정',
+                  iconCls:'x-fa fa-edit',
+                  handler:'onUpdateOil'
                 }
-              ]
+              ],
+              plugins:{
+                ptype:'cellediting',
+                clicksToEdit: 1
+              },
+              columns: [
+                { text: '월', dataIndex: 'oddMonth', flex: 1 },
+                { text: '주유량(리터)', dataIndex: 'oddLitter', flex: 1, editor: 'textfield' },
+                { text: '주유금액', dataIndex: 'oddMoney', flex: 1, editor: 'textfield' },
+                { text: '월', dataIndex: 'evenMonth', flex: 1 },
+                { text: '주유량(리터)', dataIndex: 'evenLitter', flex: 1, editor: 'textfield' },
+                { text: '주유금액', dataIndex: 'evenMoney', flex: 1, editor: 'textfield' }
+              ],
+              store: {
+                fields: ['oddMonth', 'oddLitter', 'oddMoney', 'evenMonth', 'evenLitter', 'evenMoney'],
+                data: [
+                  { oddMonth: '1월', oddLitter: '10', oddMoney: '11', evenMonth: '2월', evenLitter: '2', evenMoney: '22' },
+                  { oddMonth: '3월', oddLitter: '0', oddMoney: '0', evenMonth: '4월', evenLitter: '0', evenMoney: '0' },
+                  { oddMonth: '5월', oddLitter: '0', oddMoney: '0', evenMonth: '6월', evenLitter: '0', evenMoney: '0' },
+                  { oddMonth: '7월', oddLitter: '0', oddMoney: '0', evenMonth: '8월', evenLitter: '0', evenMoney: '0' },
+                  { oddMonth: '9월', oddLitter: '0', oddMoney: '0', evenMonth: '10월', evenLitter: '0', evenMoney: '0' },
+                  { oddMonth: '11월', oddLitter: '0', oddMoney: '0', evenMonth: '12월', evenLitter: '0', evenMoney: '0' }
+                ]
+              }
             },
+            
             
             // 차량 수리 내역
             {
-              xtype: 'grid',
+              xtype: 'form',
+              reference: 'repairForm',
               title: '차량수리내역',
               margin: '10 0',
               autoHeight: true,
-              columns: [
-                { text: '일자', dataIndex: 'regDate', flex: 1 },
-                { text: '운전자', dataIndex: 'driver', flex: 1 },
-                { text: '수리내역', dataIndex: 'suri', flex: 2 },
-                { text: '운행거리', dataIndex: 'distance', flex: 1 },
-                { text: '금액', dataIndex: 'money', flex: 1 },
-                { text: '비고', dataIndex: 'bigo', flex: 2 }
+              // tbar: [
+              //   '->',
+              //   {
+              //     xtype: 'button',
+              //     text: '수정',
+              //     iconCls: 'x-fa fa-save',
+              //     handler: 'onSaveRepair'
+              //   }
+              // ],
+              layout: {
+                type: 'table',
+                columns: 7
+              },
+              defaults: {
+                xtype: 'textfield',
+                width: 140,
+                margin: '5 5 0 0',
+                labelAlign: 'top'
+              },
+            
+              items: [
+                // 🧩 헤더
+                { xtype: 'displayfield', value: '월', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '일자', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '운전자', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '수리내역', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '운행거리', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '비고', fieldStyle: 'text-align:center;font-weight:bold;', flex:1 },
+            
+                // 🧩 1월 ~ 12월 입력 칸 반복 생성
+                ...Array.from({ length: 12 }, (_, idx) => {
+                  const month = idx + 1;
+                  return [
+                    { xtype: 'displayfield', value: `${month}월`, width: 50, fieldStyle: 'text-align:center;' },
+                    { name: `repairRegDt${month}` },
+                    { name: `repairDriver${month}` },
+                    { name: `repairSuri${month}` },
+                    { name: `repairDistance${month}` },
+                    { name: `repairMoney${month}` },
+                    { name: `repairBigo${month}` }
+                  ];
+                }).flat()
               ],
-              store: {
-                fields: ['regDate', 'driver', 'suri', 'distance', 'money', 'bigo'],
-                data: [
-                  { regDate: '2025-04-21', driver: '강병선', suri: 'A', distance: '100Km', money: '1,000원', bigo: '11' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' },
-                  { regDate: '', driver: '', suri: '', distance: '0Km', money: '0원', bigo: '' }
-                ]
-              }
+            
+              buttons: [
+                '->',
+                {
+                  text: '수리내역 저장',
+                  iconCls: 'x-fa fa-save',
+                  handler: 'onSaveRepair'
+                }
+              ]
             },
             
 
@@ -365,6 +523,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             // 차량 사고 현황
             {
               xtype: 'grid',
+              reference: 'accidentGrid',
               title: '차량사고현황',
               //height: 300,
               autoHeight: true,
@@ -399,6 +558,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             // 차량세 및 공과금
             {
               xtype: 'grid',
+              reference: 'taxGrid',
               title: '차량세 및 공과금',
               margin: '10 0',
               autoHeight: true,

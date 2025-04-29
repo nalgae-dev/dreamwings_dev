@@ -18,6 +18,8 @@ public class Oman4001Repository {
     public List<CarListDto> getCarRepairLatestDriver() {
         String sql = """
             SELECT 
+             center_cd as centerCd,
+             car_cd as carCd,
              car_regnum as carRegnum,
              car_kind as repairDriver,
              car_nm as carNm
@@ -30,7 +32,9 @@ public class Oman4001Repository {
         return results.stream().map(r -> new CarListDto(
             (String) r[0],
             (String) r[1],
-            (String) r[2] 
+            (String) r[2], 
+            (String) r[3],
+            (String) r[4]
         )).toList();
     }
 }
