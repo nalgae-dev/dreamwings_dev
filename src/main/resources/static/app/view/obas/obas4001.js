@@ -55,11 +55,9 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
         const carCd = record.get("carCd");
         const centerCd = record.get("centerCd");
 
-        console.log(carCd);
-
         if (!carCd) return;
 
-        // 선택된 차량 centerCd, carCd를 view에 저장
+        // 선택된 차량 centerCd, carCd를 해당 뷰에 전역변수로 저장
         view.selectedCenterCd = centerCd;
         view.selectedCarCd = carCd;
 
@@ -75,10 +73,6 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
               carForm.getForm().setValues(data.carInfo);
             }
 
-            // const oilGrid = view.lookupReference('oilGrid');
-            // if (oilGrid && data.oilList) {
-            //   oilGrid.getStore().loadData(data.oilList);
-            // }
 
             // 주유내역 폼(oilForm) 채우기
             const oilForm = view.lookupReference('oilForm');
@@ -119,9 +113,20 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
               accidentGrid.getStore().loadData(data.accidentList);
             }
 
-            const taxGrid = view.lookupReference('taxGrid');
-            if (taxGrid && data.taxList) {
-              taxGrid.getStore().loadData(data.taxList);
+            const taxForm = view.lookupReference('taxForm');
+            if (taxForm && data.taxData) {
+              const values = {};
+            
+              for (let i = 1; i <= 12; i++) {
+                values[`taxRegDt${i}`] = data.taxData[`taxRegDt${i}`] || '';
+                values[`taxMoney${i}`] = data.taxData[`taxMoney${i}`] || '';
+                values[`taxContents${i}`] = data.taxData[`taxContents${i}`] || '';
+                values[`taxBigo${i}`] = data.taxData[`taxBigo${i}`] || '';
+              }
+            
+              taxForm.getForm().setValues(values);
+            } else {
+              taxForm.getForm().reset();
             }
           },
           failure: function () {
@@ -163,6 +168,8 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
         });
       },
 
+
+      // 주유 내역 저장
       onSaveOil: function(btn) {
         const view = this.getView();
         const form = view.lookupReference('oilForm');
@@ -194,6 +201,46 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             Ext.Msg.alert('오류', '주유내역 저장 실패');
           }
         });
+      },
+
+      // 차량 세금 내역 저장
+      onSaveTax:function(btn) {
+        const view = this.getView();
+        const form = view.lookupReference('taxForm');
+
+        if (!form.isValid()) {
+          Ext.Msg.alert('오류', '입력값을 확인해주세요.');
+          return;
+        }
+
+        const values = form.getValues();
+
+        const payload = {
+          id:{
+            centerCd: view.selectedCenterCd,
+            carCd: view.selectedCarCd,
+            taxYear: new Date().getFullYear().toString()
+          },
+          insertId: 'admin',
+          updatedId: 'admin',
+          ...values
+        };
+
+        Ext.Ajax.request({
+          url: '/obas/tax/save',
+          method: 'POST',
+          jsonData: payload,
+          success: function() {
+            Ext.Msg.alert('성공', '차량세가 저장되었습니다.');
+          },
+          failure: function() {
+            Ext.Msg.alert('오류', '차량세 저장에 실패했습니다.');
+          }
+        });
+
+
+
+
       }
 
 
@@ -620,37 +667,52 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             
             // 차량세 및 공과금
             {
-              xtype: 'grid',
-              reference: 'taxGrid',
+              xtype: 'form',
+              reference: 'taxForm',
               title: '차량세 및 공과금',
               margin: '10 0',
               autoHeight: true,
-              //height: 300,
-              columns: [
-                { text: '순번', dataIndex: 'no', width: 60 },
-                { text: '날짜', dataIndex: 'regDate', flex: 1 },
-                { text: '금액', dataIndex: 'money', flex: 1 },
-                { text: '내용', dataIndex: 'contents', flex: 1 },
-                { text: '비고', dataIndex: 'bigo', flex: 1 }
+              layout: {
+                type: 'table',
+                columns: 5
+              },
+              defaults: {
+                xtype: 'textfield',
+                width: 150,
+                margin: '5 5 0 0',
+                labelAlign: 'top'
+              },
+              items: [
+                // 🧩 헤더 라인
+                { xtype: 'displayfield', value: '월', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '일자', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '내용', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '비고', fieldStyle: 'text-align:center;font-weight:bold;' },
+            
+                // 🧩 1월 ~ 12월 반복
+                ...Array.from({ length: 12 }, (_, idx) => {
+                  const month = idx + 1;
+                  return [
+                    { xtype: 'displayfield', value: `${month}월`, width: 50, fieldStyle: 'text-align:center;' },
+                    { name: `taxRegDt${month}` },
+                    { name: `taxMoney${month}` },
+                    { name: `taxContents${month}` },
+                    { name: `taxBigo${month}` }
+                  ];
+                }).flat()
               ],
-              store: {
-                fields: ['no', 'regDate', 'money', 'contents', 'bigo'],
-                data: [
-                  { no: 1, regDate: '2025-04-23', money: '3,000원', contents: '더', bigo: '자' },
-                  { no: 2, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 3, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 4, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 5, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 6, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 7, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 8, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 9, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 10, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 11, regDate: '', money: '0원', contents: '', bigo: '' },
-                  { no: 12, regDate: '', money: '0원', contents: '', bigo: '' }
-                ]
-              }
+            
+              buttons: [
+                '->',
+                {
+                  text: '차량세 저장',
+                  iconCls: 'x-fa fa-save',
+                  handler: 'onSaveTax'
+                }
+              ]
             },
+            
             
             // 차량 폐차 및 매각
             {
