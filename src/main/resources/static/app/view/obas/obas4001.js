@@ -286,8 +286,10 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
           }
         });
 
-     
+      },
 
+      onSaveSell: function(btn) {
+        
 
       }
 
@@ -781,36 +783,52 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             
             // 차량 폐차 및 매각
             {
-              xtype: 'grid',
+              xtype: 'form',
+              reference:'sellForm',
               title: '차량매각/폐차 내역',
               autoHeight: true,
               margin: '10 0',
-              columns: [
-                {
-                  text: '구분',
-                  dataIndex: 'gubun',
-                  flex: 1,
-                  renderer: function (value) {
-                    // 1 = 폐차, 0 = 매각
-                    return value === '1' ? '폐차' : '매각';
-                  }
-                },
-                { text: '일자', dataIndex: 'regDate', flex: 1 },
-                { text: '사유', dataIndex: 'sayou', flex: 2 },
-                { text: '방법', dataIndex: 'way', flex: 1 },
-                { text: '금액', dataIndex: 'money', flex: 1 }
-              ],
-              store: {
-                fields: ['gubun', 'regDate', 'sayou', 'way', 'money'],
-                data: [
-                  { gubun: '1', regDate: '', sayou: '12', way: '146', money: '456원' },
-                  { gubun: '0', regDate: '', sayou: '', way: '', money: '0원' },
-                  // 추가 데이터 예시
-                  { gubun: '', regDate: '', sayou: '', way: '', money: '' }
-                ]
-              }
-            }
+              layout: {
+                type: 'table',
+                columns: 5
+              },
+              defaults: {
+                xtype: 'textfield',
+                width: 150,
+                margin: '5 5 0 0',
+                labelAlign: 'top'
+              },
+              items: [
+                // 헤더
+                { xtype: 'displayfield', value: '구분', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '일자', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '사유', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '방법', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                
+                // 첫번째 줄
+                { xtype: 'displayfield', value: '매각', fieldStyle: 'text-align:center;font-weight:bold;', width: 50},
+                { name : `SELL_REG_DT1`},
+                { name : `SELL_SAYOU1`},
+                { name : `SELL_WAY1`},
+                { name : `SELL_MONEY1`},
 
+                //두번째 줄
+                { xtype: 'displayfield', value: '폐차', fieldStyle: 'text-align:center;font-weight:bold;', width: 50},
+                { name : `SELL_REG_DT2`},
+                { name : `SELL_SAYOU2`},
+                { name : `SELL_WAY2`},
+                { name : `SELL_MONEY2`},
+              ],
+              buttons: [
+                '->',
+                {
+                  text: '매각/폐차 내역 저장',
+                  iconCls: 'x-fa fa-save',
+                  handler: 'onSaveSell'
+                }
+              ]
+            }
 
           ]
         }
