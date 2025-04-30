@@ -108,9 +108,20 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
               repairForm.reset();
             }
 
-            const accidentGrid = view.lookupReference('accidentGrid');
-            if (accidentGrid && data.accidentList) {
-              accidentGrid.getStore().loadData(data.accidentList);
+            const accidentForm = view.lookupReference('accidentForm');
+            if (accidentForm && data.accidentData) {
+              const values = {};
+            
+              for (let i = 1; i <= 12; i++) {
+                values[`carsagoDriver${i}`] = data.accidentData[`carsagoDriver${i}`] || '';
+                values[`carsagoPhMoney${i}`] = data.accidentData[`carsagoPhMoney${i}`] || '';
+                values[`carsagoInsuGu${i}`] = data.accidentData[`carsagoInsuGu${i}`] || '';
+                values[`carsagoBsMoney${i}`] = data.accidentData[`carsagoBsMoney${i}`] || '';
+              }
+            
+              accidentForm.getForm().setValues(values);
+            } else if (accidentForm) {
+              accidentForm.getForm().reset();
             }
 
             const taxForm = view.lookupReference('taxForm');
@@ -238,10 +249,50 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
           }
         });
 
+      },
 
+      // 차량 사고내역 저장
+      onSaveAccident: function(btn) {
+        const view = this.getView();
+        const form = view.lookupReference('accidentForm');
+
+        if (!form.isValid()) {
+          Ext.Msg.alert('오류', '입력값을 확인해주세요.');
+          return;
+        }
+
+        const values = form.getValues();
+
+        const payload = {
+          id:{
+            centerCd:view.selectedCenterCd,
+            carCd:view.selectedCarCd,
+            carsagoYear: new Date().getFullYear().toString()
+          },
+          insertId: 'admin',
+          updateId: 'admin',
+          ...values
+        }
+
+        Ext.Ajax.request({
+          url:'/obas/accident/save',
+          method: 'POST',
+          jsonData: payload,
+          success: function() {
+            Ext.Msg.alert('성공', '사고현황이 저장되었습니다.');
+          },
+          failure: function() {
+            Ext.Msg.alert('오류', '사고현황 저장 실패');
+          }
+        });
+
+     
 
 
       }
+
+
+      
 
 
 
@@ -632,38 +683,52 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
 
             // 차량 사고 현황
             {
-              xtype: 'grid',
-              reference: 'accidentGrid',
+              xtype: 'form',
+              reference: 'accidentForm',
               title: '차량사고현황',
-              //height: 300,
-              autoHeight: true,
               margin: '10 0',
-              columns: [
-                { text: '순번', dataIndex: 'no', width: 60 },
-                { text: '운전자', dataIndex: 'driver', flex: 1 },
-                { text: '피해금액', dataIndex: 'phMoney', flex: 1 },
-                { text: '보험처리여부', dataIndex: 'insuYn', flex: 1 },
-                { text: '보상금액', dataIndex: 'bsMoney', flex: 1 },
-                { text: '사고경위', dataIndex: 'contents', flex: 2 }
+              autoHeight: true,
+              layout: {
+                type: 'table',
+                columns: 5
+              },
+              defaults: {
+                xtype: 'textfield',
+                width: 150,
+                margin: '5 5 0 0',
+                labelAlign: 'top'
+              },
+              items: [
+                // 🧩 헤더 라인
+                { xtype: 'displayfield', value: '월', fieldStyle: 'text-align:center;font-weight:bold;', width: 50 },
+                { xtype: 'displayfield', value: '운전자', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '피해금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '보험처리', fieldStyle: 'text-align:center;font-weight:bold;' },
+                { xtype: 'displayfield', value: '보상금액', fieldStyle: 'text-align:center;font-weight:bold;' },
+                
+                // 🧩 1월 ~ 12월 반복 생성
+                ...Array.from({ length: 12 }, (_, idx) => {
+                  const month = idx + 1;
+                  return [
+                    { xtype: 'displayfield', value: `${month}월`, width: 50, fieldStyle: 'text-align:center;' },
+                    { name: `carsagoDriver${month}` },
+                    { name: `carsagoPhMoney${month}` },
+                    { name: `carsagoInsuGu${month}` },
+                    { name: `carsagoBsMoney${month}` }
+                  ];
+                }).flat()
               ],
-              store: {
-                fields: ['no', 'driver', 'phMoney', 'insuYn', 'bsMoney', 'contents'],
-                data: [
-                  { no: 1, driver: '강병선', phMoney: '100,000원', insuYn: '유', bsMoney: '20원', contents: '가' },
-                  { no: 2, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 3, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 4, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 5, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 6, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 7, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 8, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 9, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 10, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 11, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' },
-                  { no: 12, driver: '', phMoney: '0원', insuYn: '유', bsMoney: '0원', contents: '' }
-                ]
-              }
+              
+              buttons: [
+                '->',
+                {
+                  text: '사고현황 저장',
+                  iconCls: 'x-fa fa-save',
+                  handler: 'onSaveAccident'  // ▶️ 사고 저장 핸들러 연결
+                }
+              ]
             },
+            
             
             // 차량세 및 공과금
             {

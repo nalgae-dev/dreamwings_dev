@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.nalgae.dreamnalgae.entity.obas.RepairId;
 import com.nalgae.dreamnalgae.entity.obas.TmsCar;
+import com.nalgae.dreamnalgae.entity.obas.TmsCarsago;
+import com.nalgae.dreamnalgae.entity.obas.TmsCarsagoId;
 import com.nalgae.dreamnalgae.entity.obas.TmsOil;
 import com.nalgae.dreamnalgae.entity.obas.TmsOilId;
 import com.nalgae.dreamnalgae.entity.obas.TmsRepair;
@@ -28,6 +30,7 @@ import com.nalgae.dreamnalgae.model.obas.OilSaveRequest;
 import com.nalgae.dreamnalgae.model.obas.OilupdateRequest;
 import com.nalgae.dreamnalgae.repository.obas.Oman4001Repository;
 import com.nalgae.dreamnalgae.repository.obas.TmsCarRepository;
+import com.nalgae.dreamnalgae.repository.obas.TmsCarsagoRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsOilRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsRepairRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsTaxRepository;
@@ -43,6 +46,7 @@ public class Obas4001Service {
     private final TmsRepairRepository tmsRepairRepository;
     private final TmsOilRepository tmsOilRepository;
     private final TmsTaxRepository tmsTaxRepository;
+    private final TmsCarsagoRepository tmsCarsagoRepository;
     private final JdbcTemplate jdbcTemplate;
 
     public List<CarListDto> getCarRepairLatestDriver ()  {
@@ -125,30 +129,60 @@ public class Obas4001Service {
     // 차량 세금 내역 저장
     @Transactional
     public void saveTax(TmsTax tax) {
-    TmsTaxId id = tax.getId();
-    if (id == null || id.getCenterCd() == null || id.getCarCd() == null || id.getTaxYear() == null) {
-        throw new IllegalArgumentException("ID 정보(centerCd, carCd, taxYear)가 누락되었습니다.");
+        TmsTaxId id = tax.getId();
+        if (id == null || id.getCenterCd() == null || id.getCarCd() == null || id.getTaxYear() == null) {
+            throw new IllegalArgumentException("ID 정보(centerCd, carCd, taxYear)가 누락되었습니다.");
+        }
+
+        boolean exists = tmsTaxRepository.existsById(id);
+
+        if (exists) {
+            TmsTax existing = tmsTaxRepository.findById(id)
+                    .orElseThrow(() -> new IllegalStateException("수정할 세금 데이터가 없습니다."));
+
+            BeanUtils.copyProperties(tax, existing, "id", "insertDt", "insertId");
+            existing.setUpdateDt(new Date());
+            existing.setUpdateId("admin");
+
+            tmsTaxRepository.save(existing);
+        } else {
+            tax.setInsertDt(new Date());
+            tax.setInsertId("admin");
+            tmsTaxRepository.save(tax);
+        }
+
     }
 
-    boolean exists = tmsTaxRepository.existsById(id);
 
-    if (exists) {
-        TmsTax existing = tmsTaxRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("수정할 세금 데이터가 없습니다."));
+    // 차량 사고현황 저장
+    @Transactional
+    public void saveAccident(TmsCarsago accident) {
+        TmsCarsagoId id = accident.getId();
+        if (id == null || id.getCenterCd() == null || id.getCarCd() == null || id.getCarsagoYear() == null) {
+            throw new IllegalArgumentException("ID 정보(centerCd, carCd, carsagoYear)가 누락되었습니다.");
+        }
 
-        BeanUtils.copyProperties(tax, existing, "id", "insertDt", "insertId");
-        existing.setUpdateDt(new Date());
-        existing.setUpdateId("admin");
+        boolean exists = tmsCarsagoRepository.existsById(id);
 
-        tmsTaxRepository.save(existing);
-    } else {
-        tax.setInsertDt(new Date());
-        tax.setInsertId("admin");
-        tmsTaxRepository.save(tax);
+        if (exists) {
+            TmsCarsago existing = tmsCarsagoRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("수정할 데이터가 없습니다."));
+
+            BeanUtils.copyProperties(accident, existing, "id", "insertDt", "insertId");
+
+            existing.setUpdateDt(new Date());
+            existing.setUpdateId("admin"); // 로그인 사용자 ID로 교체 가능
+            tmsCarsagoRepository.save(existing);
+        } else {
+            accident.setInsertDt(new Date());
+            accident.setInsertId("admin"); // 로그인 사용자 ID로 교체 가능
+            tmsCarsagoRepository.save(accident);
+        }
     }
 
+    // 차량 사고현황 조회
+    public TmsCarsago getAccidentData(String carCd) {
+        return tmsCarsagoRepository.findFirstByIdCarCd(carCd);
     }
-
-
     
 }
