@@ -29,6 +29,10 @@ dependencies {
 
 	// 👇 Oracle Dialect 추가
     implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.11.Final'
+
+	// KO16MSWIN949 문자셋 호환을 위한 라이브러리 추가
+	// implementation 'com.oracle.ojdbc:orai18n:19.3.0.0'
+	 implementation fileTree(dir: 'libs', include: ['*.jar'])
 	
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

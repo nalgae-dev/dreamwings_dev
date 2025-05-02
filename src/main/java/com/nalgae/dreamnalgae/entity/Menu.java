@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "TB_MENU_M")
+@Table(name = "TMS_MENU_M")
 @Getter
 @Setter
 @NoArgsConstructor
