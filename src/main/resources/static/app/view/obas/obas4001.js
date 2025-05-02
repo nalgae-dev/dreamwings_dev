@@ -139,6 +139,24 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             } else {
               taxForm.getForm().reset();
             }
+
+            const sellForm = view.lookupReference('sellForm');
+            if (sellForm && data.sellData) {
+              const values = {};
+
+              values[`sellRegDt1`] = data.sellData[`sellRegDt1`] || '';
+              values[`sellRegDt2`] = data.sellData[`sellRegDt2`] || '';
+              values[`sellSayou1`] = data.sellData[`sellSayou1`] || '';
+              values[`sellSayou2`] = data.sellData[`sellSayou2`] || '';
+              values[`sellWay1`] = data.sellData[`sellWay1`] || '';
+              values[`sellWay2`] = data.sellData[`sellWay2`] || '';
+              values[`sellMoney1`] = data.sellData[`sellMoney1`] || '';
+              values[`sellMoney2`] = data.sellData[`sellMoney2`] || '';
+
+              sellForm.getForm().setValues(values);
+            } else {
+              sellForm.getForm().reset();
+            }
           },
           failure: function () {
             Ext.Msg.alert('오류', '차량 정보를 불러오는데 실패했습니다.');
@@ -289,7 +307,36 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
       },
 
       onSaveSell: function(btn) {
-        
+        const view = this.getView();
+        const form = view.lookupReference('sellForm');
+
+        if (!form.isValid()) {
+          Ext.Msg.alert('오류', '입력값을 확인해주세요.');
+          return;
+        }
+
+        const values = form.getValues();
+        const payload = {
+          id : {
+            centerCd: view.selectedCenterCd,
+            carCd: view.selectedCarCd,
+            sellYear: new Date().getFullYear().toString()
+          },
+          ...values
+        };
+
+        Ext.Ajax.request({
+          url: '/obas/sell/save',
+          method: 'POST',
+          jsonData: payload,
+          success: function () {
+            Ext.Msg.alert('성공', '매각/폐차 내역이 저장되었습니다.');
+          },
+          failure: function () {
+            Ext.Msg.alert('오류', '매각/폐차 내역 저장 실패');
+          }
+        });
+
 
       }
 
@@ -808,17 +855,17 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                 
                 // 첫번째 줄
                 { xtype: 'displayfield', value: '매각', fieldStyle: 'text-align:center;font-weight:bold;', width: 50},
-                { name : `SELL_REG_DT1`},
-                { name : `SELL_SAYOU1`},
-                { name : `SELL_WAY1`},
-                { name : `SELL_MONEY1`},
+                { name : `sellRegDt1`},
+                { name : `sellSayou1`},
+                { name : `sellWay1`},
+                { name : `sellMoney1`},
 
                 //두번째 줄
                 { xtype: 'displayfield', value: '폐차', fieldStyle: 'text-align:center;font-weight:bold;', width: 50},
-                { name : `SELL_REG_DT2`},
-                { name : `SELL_SAYOU2`},
-                { name : `SELL_WAY2`},
-                { name : `SELL_MONEY2`},
+                { name : `sellRegDt2`},
+                { name : `sellSayou2`},
+                { name : `sellWay2`},
+                { name : `sellMoney2`},
               ],
               buttons: [
                 '->',
