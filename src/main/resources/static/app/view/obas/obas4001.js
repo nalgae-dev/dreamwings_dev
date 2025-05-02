@@ -420,7 +420,7 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
             align:'stretch'
           },
           items:[
-            // 차량기본정보 시작작
+            // 차량기본정보 시작
             {
               xtype: 'panel',
               title: '차량기본정보',
@@ -428,6 +428,31 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                 type: 'vbox',
                 align: 'stretch'
               },
+              buttons: [
+                '->',
+                {
+                  text: '차량기본 정보수정',
+                  iconCls: 'x-fa fa-save',
+                  // handler: function (btn) {
+                  //   const form = btn.up('form');
+                  //   const values = form.getForm().getValues();
+                  //   const userId = form.userid || '';
+                  //   Ext.Ajax.request({
+                  //     url: '/obas/car/update',
+                  //     method: 'POST',
+                  //     jsonData: payload,
+                  //     success: function () {
+                  //         Ext.Msg.alert('성공', '차량 정보가 수정되었습니다.');
+                  //     },
+                  //     failure: function () {
+                  //         Ext.Msg.alert('실패', '수정에 실패했습니다.');
+                  //     }
+                  //   });
+
+                  // }
+                }
+              ],
+
               //padding: 10,
               items: [
                 // [1] 차량 기본정보
@@ -446,7 +471,24 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                     margin: '5 15 5 5'
                   },
                   items: [
-                    { fieldLabel: '운전자명', name: 'driver' },
+                    { fieldLabel: '운전자명', name: 'driver' , readOnly: true,
+                      listeners: {
+                        focus: function (field) {
+                          //field.setValue('test');
+                          const view = field.up('panel'); // 전체 패널 참조
+                          const win = Ext.create('DreamNalgae.view.common.UserSearchWindow');
+                          win.on('userselected', function (record) {
+                            // 사용자 선택 시 폼에 표시될 이름 + 내부 저장용 userId도 저장
+                            field.setValue(record.get('userNm'));
+                            //view.down('form[reference=carInfoForm').userId = record.get('userId'); // 내부 저장용용
+                          });
+
+                          win.show();
+                        }
+                      }
+
+                    },
+                    
                     { fieldLabel: '차량톤수', name: 'carTon' },
                     { fieldLabel: '적재량', name: 'carLoadage' },
                     { fieldLabel: '차량등록번호', name: 'carRegnum' },
@@ -465,151 +507,152 @@ Ext.define('DreamNalgae.view.obas.obas4001', {
                     { fieldLabel: '취득금액', name: 'carPurMoney' }
                   ]
                 },
-
-                {
-                  xtype: 'fieldset',
-                  //title: '검사일정',
-                  layout: {
-                    type: 'table',
-                    columns: 4  // ▶ 왼쪽 레이블 병합 영역 + 3개 검사일
-                  },
-                  defaults: {
-                    margin: 5
-                  },
-                  items: [
-                    // ① 왼쪽 병합 라벨
-                    {
-                      xtype: 'component',
-                      html: '<div style="height:60px; line-height:60px; font-weight:bold;">검사일정</div>',
-                      rowspan: 2,
-                      width: 100,
-                      style: 'text-align:center; border-right:1px solid #ccc;',
-                    },
-                    // ② 첫 번째 행 - 필드 이름 라벨
-                    {
-                      xtype: 'component',
-                      html: '<b>정기검사</b>',
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'component',
-                      html: '<b>영업용검사</b>',
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'component',
-                      html: '<b>배출가스검사</b>',
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    // ③ 두 번째 행 - 실제 검사일 데이터
-                    {
-                      xtype: 'displayfield',
-                      name: 'chkDate',
-                      value: '2009-08-26',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'displayfield',
-                      name: 'bizChkDate',
-                      value: '2009-12-08',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'displayfield',
-                      name: 'gasChkDate',
-                      value: '2009-08-26',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 200
-                    }
-                  ]
-                },
-                {
-                  xtype: 'fieldset',
-                  //title: '보험관리',
-                  layout: {
-                    type: 'table',
-                    columns: 5  // ▶ 왼쪽 병합 레이블 + 4개 컬럼
-                  },
-                  defaults: {
-                    margin: 5
-                  },
-                  items: [
-                    // ① 왼쪽 병합된 라벨
-                    {
-                      xtype: 'component',
-                      html: '<div style="height:60px; line-height:60px; font-weight:bold;">보험관리</div>',
-                      rowspan: 2,
-                      width: 100,
-                      style: 'text-align:center; border-right:1px solid #ccc;'
-                    },
-                    // ② 첫 번째 행 - 제목 라벨들
-                    {
-                      xtype: 'component',
-                      html: '<b>보험사</b>',
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'component',
-                      html: '<b>책임보험료</b>',
-                      style: 'text-align:center;',
-                      width: 150
-                    },
-                    {
-                      xtype: 'component',
-                      html: '<b>종합보험료</b>',
-                      style: 'text-align:center;',
-                      width: 150
-                    },
-                    {
-                      xtype: 'component',
-                      html: '<b>연보험료(책임+종합)</b>',
-                      style: 'text-align:center;',
-                      width: 180
-                    },
-                    // ③ 두 번째 행 - 실제 데이터 필드
-                    {
-                      xtype: 'displayfield',
-                      name: 'insCompany',
-                      value: '경기화물공제조합',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 200
-                    },
-                    {
-                      xtype: 'displayfield',
-                      name: 'insAmount1',
-                      value: '515,100 원',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 150
-                    },
-                    {
-                      xtype: 'displayfield',
-                      name: 'insAmount2',
-                      value: '564,300 원',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 150
-                    },
-                    {
-                      xtype: 'displayfield',
-                      name: 'insTotal',
-                      value: '1,079,400 원',
-                      hideLabel: true,
-                      style: 'text-align:center;',
-                      width: 180
-                    }
-                  ]
-                }
+                
+                // 매칭되는 테이블과 컬럼이 없어서 주석처리함.
+                // {
+                //   xtype: 'fieldset',
+                //   //title: '검사일정',
+                //   layout: {
+                //     type: 'table',
+                //     columns: 4  // ▶ 왼쪽 레이블 병합 영역 + 3개 검사일
+                //   },
+                //   defaults: {
+                //     margin: 5
+                //   },
+                //   items: [
+                //     // ① 왼쪽 병합 라벨
+                //     {
+                //       xtype: 'component',
+                //       html: '<div style="height:60px; line-height:60px; font-weight:bold;">검사일정</div>',
+                //       rowspan: 2,
+                //       width: 100,
+                //       style: 'text-align:center; border-right:1px solid #ccc;',
+                //     },
+                //     // ② 첫 번째 행 - 필드 이름 라벨
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>정기검사</b>',
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>영업용검사</b>',
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>배출가스검사</b>',
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     // ③ 두 번째 행 - 실제 검사일 데이터
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'chkDate',
+                //       value: '2009-08-26',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'bizChkDate',
+                //       value: '2009-12-08',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'gasChkDate',
+                //       value: '2009-08-26',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     }
+                //   ]
+                // },
+                // {
+                //   xtype: 'fieldset',
+                //   //title: '보험관리',
+                //   layout: {
+                //     type: 'table',
+                //     columns: 5  // ▶ 왼쪽 병합 레이블 + 4개 컬럼
+                //   },
+                //   defaults: {
+                //     margin: 5
+                //   },
+                //   items: [
+                //     // ① 왼쪽 병합된 라벨
+                //     {
+                //       xtype: 'component',
+                //       html: '<div style="height:60px; line-height:60px; font-weight:bold;">보험관리</div>',
+                //       rowspan: 2,
+                //       width: 100,
+                //       style: 'text-align:center; border-right:1px solid #ccc;'
+                //     },
+                //     // ② 첫 번째 행 - 제목 라벨들
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>보험사</b>',
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>책임보험료</b>',
+                //       style: 'text-align:center;',
+                //       width: 150
+                //     },
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>종합보험료</b>',
+                //       style: 'text-align:center;',
+                //       width: 150
+                //     },
+                //     {
+                //       xtype: 'component',
+                //       html: '<b>연보험료(책임+종합)</b>',
+                //       style: 'text-align:center;',
+                //       width: 180
+                //     },
+                //     // ③ 두 번째 행 - 실제 데이터 필드
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'insCompany',
+                //       value: '경기화물공제조합',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 200
+                //     },
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'insAmount1',
+                //       value: '515,100 원',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 150
+                //     },
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'insAmount2',
+                //       value: '564,300 원',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 150
+                //     },
+                //     {
+                //       xtype: 'displayfield',
+                //       name: 'insTotal',
+                //       value: '1,079,400 원',
+                //       hideLabel: true,
+                //       style: 'text-align:center;',
+                //       width: 180
+                //     }
+                //   ]
+                // }
               ]
             },
             
