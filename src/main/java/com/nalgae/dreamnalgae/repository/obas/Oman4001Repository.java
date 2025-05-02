@@ -18,17 +18,17 @@ public class Oman4001Repository {
     public List<CarListDto> getCarRepairLatestDriver() {
         String sql = """
             SELECT 
-             center_cd as centerCd,
-             car_cd as carCd,
-             car_regnum as carRegnum,
-             car_kind as repairDriver,
-             car_nm as carNm
-            FROM TMS_CAR
+             c.center_cd as centerCd,
+             c.car_cd as carCd,
+             c.car_regnum as carRegnum,
+             u.user_nm as repairDriver,
+             c.car_nm as carNm
+            FROM TMS_CAR c
+            LEFT JOIN TMS_USER_M u ON c.USER_ID = u.USER_ID
             """;
 
         List<Object[]> results = em.createNativeQuery(sql).getResultList();
 
-        System.out.println(results);
         return results.stream().map(r -> new CarListDto(
             (String) r[0],
             (String) r[1],

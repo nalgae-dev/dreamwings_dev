@@ -1,5 +1,6 @@
 package com.nalgae.dreamnalgae.entity.obas;
 
+import java.beans.Transient;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -110,4 +111,6 @@ public class TmsCar {
 
     @Column(name = "USER_ID")
     private String userId; // 사용자코드
+
+    
 }

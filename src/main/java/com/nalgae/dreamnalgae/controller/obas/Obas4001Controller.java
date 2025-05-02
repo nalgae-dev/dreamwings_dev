@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nalgae.dreamnalgae.entity.obas.TmsCarsago;
 import com.nalgae.dreamnalgae.entity.obas.TmsOil;
 import com.nalgae.dreamnalgae.entity.obas.TmsRepair;
+import com.nalgae.dreamnalgae.entity.obas.TmsSell;
 import com.nalgae.dreamnalgae.entity.obas.TmsTax;
 import com.nalgae.dreamnalgae.model.obas.CarListDto;
 import com.nalgae.dreamnalgae.service.obas.Obas4001Service;
@@ -42,6 +43,7 @@ public class Obas4001Controller {
         result.put("repairData", obas4001Service.getRepairData(carCd));
         result.put("taxData", obas4001Service.getTaxInfo(carCd));
         result.put("accidentData", obas4001Service.getAccidentData(carCd));
+        result.put("sellData", obas4001Service.getSellData(carCd));
        
         return result;
     }
@@ -93,7 +95,17 @@ public class Obas4001Controller {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사고내역 저장 실패: " + e.getMessage()); 
         }
+    }
 
+    // 차량 매각/폐차 내역 저장
+    @PostMapping("/sell/save")
+    public ResponseEntity<?> saveSell(@RequestBody TmsSell sell) {
+        try {
+            obas4001Service.saveSell(sell);
+            return ResponseEntity.ok("사고내역이 성공적으로 저장되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사고내역 저장 실패: " + e.getMessage()); 
+        }
     }
 
 

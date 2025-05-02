@@ -21,9 +21,12 @@ import com.nalgae.dreamnalgae.entity.obas.TmsCarsagoId;
 import com.nalgae.dreamnalgae.entity.obas.TmsOil;
 import com.nalgae.dreamnalgae.entity.obas.TmsOilId;
 import com.nalgae.dreamnalgae.entity.obas.TmsRepair;
+import com.nalgae.dreamnalgae.entity.obas.TmsSell;
+import com.nalgae.dreamnalgae.entity.obas.TmsSellId;
 import com.nalgae.dreamnalgae.entity.obas.TmsTax;
 import com.nalgae.dreamnalgae.entity.obas.TmsTaxId;
 import com.nalgae.dreamnalgae.model.Book;
+import com.nalgae.dreamnalgae.model.obas.CarDetailDTO;
 import com.nalgae.dreamnalgae.model.obas.CarListDto;
 import com.nalgae.dreamnalgae.model.obas.OilMonthData;
 import com.nalgae.dreamnalgae.model.obas.OilSaveRequest;
@@ -33,6 +36,7 @@ import com.nalgae.dreamnalgae.repository.obas.TmsCarRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsCarsagoRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsOilRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsRepairRepository;
+import com.nalgae.dreamnalgae.repository.obas.TmsSellRepository;
 import com.nalgae.dreamnalgae.repository.obas.TmsTaxRepository;
 
 import jakarta.transaction.Transactional;
@@ -47,6 +51,7 @@ public class Obas4001Service {
     private final TmsOilRepository tmsOilRepository;
     private final TmsTaxRepository tmsTaxRepository;
     private final TmsCarsagoRepository tmsCarsagoRepository;
+    private final TmsSellRepository tmsSellRepository;
     private final JdbcTemplate jdbcTemplate;
 
     public List<CarListDto> getCarRepairLatestDriver ()  {
@@ -54,8 +59,10 @@ public class Obas4001Service {
 
     }
 
-    public TmsCar getCarInfo(String carCd) {
-        return tmsCarRepository.findFirstByIdCarCd(carCd);
+    public CarDetailDTO getCarInfo(String carCd) {
+
+        return tmsCarRepository.getCarInfo(carCd);
+        //return tmsCarRepository.findFirstByIdCarCd(carCd);
     }
 
     public TmsRepair getRepairData(String carCd) {
@@ -180,9 +187,40 @@ public class Obas4001Service {
         }
     }
 
+    // 차량 매각/폐차 내역 저장
+    @Transactional
+    public void saveSell(TmsSell sell) {
+        TmsSellId id = sell.getId();
+        if (id == null || id.getCenterCd() == null || id.getCarCd() == null || id.getSellYear() == null) {
+            throw new IllegalArgumentException("ID정보(centerCd, carCd, sellYear)가 누락되었습니다.");
+        }
+
+        boolean exists = tmsSellRepository.existsById(id);
+
+        if (exists) {
+            TmsSell existing = tmsSellRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("수정할 데이터가 없습니다."));
+
+            BeanUtils.copyProperties(sell, existing, "id", "insertDt","insertId");
+            existing.setUpdateDt(new Date());
+            existing.setUpdateId("admin");
+            tmsSellRepository.save(existing);
+        } else {
+            sell.setInsertDt(new Date());
+            sell.setInsertId("admin");
+            tmsSellRepository.save(sell);
+        }
+
+    }
+
     // 차량 사고현황 조회
     public TmsCarsago getAccidentData(String carCd) {
         return tmsCarsagoRepository.findFirstByIdCarCd(carCd);
+    }
+
+    // 차량 매각/폐차 내역 조회
+    public TmsSell getSellData(String carCd) {
+        return tmsSellRepository.findFirstByIdCarCd(carCd);
     }
     
 }
