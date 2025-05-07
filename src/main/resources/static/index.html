@@ -31,6 +31,233 @@
       border-color: #1e88e5;
       box-shadow: 0 0 5px rgba(30,136,229,0.3);
     }
+
+
+    /*커스텀 css 적용
+
+    .x-form-item-label-default {
+        border: 1px solid lightgray;
+        background-color: #5fa2dd;
+        color: white;
+        text-align: center;
+        height: 15px !important;
+        font: 300 11px/9px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    }
+
+    .x-form-item-body-default {
+        min-height: 15px !important;
+    }
+
+    .x-form-text-default {
+        min-height: 15px !important;
+        font: 300 11px/17px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif !important;
+        padding: 5px 4px 4px !important;
+    }
+
+    .x-form-trigger {
+        width: 24px !important;
+        font: 16px/22px 'Font Awesome 5 Free' !important;
+    }
+
+    .searchField .x-form-trigger {
+        font: 20px/23px 'Font Awesome 5 Free' !important;
+    }
+
+    .x-form-field-wrap .x-form-trigger-wrap .x-form-trigger {
+        vertical-align: middle;
+    }
+
+    .x-form-field-wrap .x-form-text-wrap {
+        text-align: center;
+    }
+
+    .x-grid-cell-inner {
+        padding: 1px 5px 1px !important;
+    }
+
+    .x-column-header-inner {
+        background-color: #e36102;
+        color: white;
+        padding-right: 0px !important;
+        padding-left: 0px !important;
+    }
+
+    .x-column-header {
+        font: 400 13px/12px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    }
+
+    .x-column-header-checkbox .x-column-header-checkbox:after,
+    .x-grid-checkcolumn:after {
+        font: 18px/1 ExtJS;
+        color: white !important;
+    }
+
+    .x-column-header-text-inner:after {
+        color: white !important;
+    }
+
+    .x-grid-item {
+        height: 21px !important;
+        color: dimgray;
+        font: 500 13px/24px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    }
+
+    .searchLabel {
+        background-color: #D0D9E2;
+        border: none;
+        color: black;
+        font-weight: 500;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .x-tab {
+        border-radius: 8px 8px 0 0;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .x-tab-bar {
+        height: 30px !important;
+        background-color: #ececec;
+    }
+
+    .x-tab-default-top {
+        padding: 0 10px 0 10px !important;
+        background-color: lightgray;
+        border-bottom: 1px solid white;
+        margin: 0 !important;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .x-tab-inner-default {
+        font: 400 13px/20px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+        color: dimgray;
+        max-width: 100%;
+    }
+
+    .x-tab.x-tab-active.x-tab-default {
+        background-color: lightgray;
+        border: 1px solid #ececec;
+    }
+
+    .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+        color: #4c82b1;
+        font-weight: 600;
+    }
+
+    .x-tab-bar-default-top > .x-tab-bar-body-default {
+        padding: 2px 4px 0 8px !important;
+    }
+
+    .x-panel-header-default-horizontal,
+    .x-panel-header-default-horizontal .x-header-noborder {
+        padding: 5px 0 !important;
+    }
+
+    .backColorFFFF66 .x-column-header-inner { background-color: #FFFF66 !important; color: black; }
+    .backColor66FF99 .x-column-header-inner { background-color: #66FF99 !important; color: black; }
+    .backColor66FFFF .x-column-header-inner { background-color: #66FFFF !important; color: black; }
+    .backColorFFCC66 .x-column-header-inner { background-color: #FFCC66 !important; color: black; }
+    .backColorFF0000 .x-column-header-inner { background-color: #FF0000 !important; color: black; }
+    .backColor99CCFF .x-column-header-inner { background-color: #99CCFF !important; color: black; }
+
+    input[type=checkbox], input[type=radio] {
+        margin: 0;
+    }
+
+    .x-tree-icon-parent-expanded,
+    .x-tree-icon-parent,
+    .x-tree-icon-leaf,
+    .x-tree-elbow-plus,
+    .x-tree-elbow-end-plus,
+    .x-grid-tree-node-expanded .x-tree-elbow-plus,
+    .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+        font-size: 16px;
+        font-family: 'Font Awesome 5 Free';
+        color: #b2b2b2;
+    }
+
+    .x-panel-header-default {
+        background-color: #e36102;
+        background-image: none;
+        font-size: 16px;
+        border: 1px solid lightgray;
+    }
+
+    .x-btn-default-small {
+        font: 400 12px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+        color: dimgray;
+        padding: 7px;
+        border: 1px solid #cbcbcb;
+        background-color: #ffffff;
+        border-radius: 0;
+    }
+
+    .x-btn-over.x-btn-default-small,
+    .x-btn.x-btn-menu-active.x-btn-default-small,
+    .x-btn.x-btn-pressed.x-btn-default-small,
+    .x-keyboard-mode .x-btn-focus.x-btn-default-small {
+        background-color: lightgray;
+        background-image: none;
+        border-color: dimgray;
+    }
+
+    .x-form-trigger-wrap-default .x-form-trigger-wrap-focus {
+        border-color: dimgray;
+    }
+
+    .x-fieldset-default.x-fieldset-collapsed .x-tool-toggle,
+    .x-fieldset-header-tool-default > .x-tool-toggle {
+        height: 25px;
+        width: 25px;
+        font: 18px/1 'Font Awesome 5 Free';
+        padding-top: 3px;
+        color: #454545;
+    }
+
+    .x-fieldset-default,
+    .x-fieldset-header-default,
+    .x-fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .x-fieldset-header-default > .x-fieldset-header-text {
+        font: 400 16px/20px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+        color: #454545;
+        padding: 5px 0 0;
+    }
+
+    .toast1 .x-window-header,
+    .toast2 .x-window-header,
+    .toast3 .x-window-header {
+        height: 30px !important;
+        padding: 3px;
+    }
+
+    .toast1 .x-window-header { background-color: rgb(102, 102, 255) !important; }
+    .toast2 .x-window-header { background-color: orange !important; }
+    .toast3 .x-window-header { background-color: rgb(255, 111, 111) !important; }
+
+    body > .x-mask {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        background-image: none;
+    }
+
+    .x-form-cb-label-default {
+        margin-top: 5px;
+        font: 300 13px/17px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+        color: #404040;
+    }
+
+    .x-form-cb-default {
+        margin-top: 4px;
+    }
+    */
+
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
@@ -38,14 +265,22 @@
   <style>
       body {
           font-family: 'Noto Sans KR', '맑은 고딕', 'Malgun Gothic', sans-serif;
-          font-size: 13px;
+          font-size: 12px;
       }
   
       .x-grid-cell,
       .x-panel,
       .x-form-field {
           font-family: 'Noto Sans KR', '맑은 고딕', 'Malgun Gothic', sans-serif;
-          font-size: 13px;
+          font-size: 12px;
+      }
+
+      .x-panel-header,
+      .x-panel-title,
+      .x-btn-inner,
+      .x-btn-default-small .x-btn-inner-default-small {
+          font-family: 'Noto Sans KR', '맑은 고딕', 'Malgun Gothic', sans-serif;
+          font-size: 12px;
       }
   </style>
 </head>

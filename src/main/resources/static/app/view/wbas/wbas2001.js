@@ -10,7 +10,7 @@ Ext.define('DreamNalgae.view.wbas.wbas2001', {
             xtype:'panel',
             region:'center',
             layout: 'vbox',
-            padding: 10,
+            padding: 2,
             scrollable: 'vertical',
             align:'stretch',
             //title:'거래처기본정보관리(WBAS2001)',
@@ -34,6 +34,7 @@ Ext.define('DreamNalgae.view.wbas.wbas2001', {
                     xtype: 'fieldset',
                     //title: '검색 조건',
                     width: '100%',
+                    bodyPadding: 1,
                     layout: {
                         type: 'table',
                         columns: 7  // 줄 수에 따라 조절 가능
@@ -92,16 +93,16 @@ Ext.define('DreamNalgae.view.wbas.wbas2001', {
                     width: '100%',
                     items: [
                         { xtype: 'tbtext', text: '<b>거래처 목록</b>', margin: '0 10 0 0' },
-                        '->',
                         { xtype: 'button', text: '바코드 인쇄', iconCls: 'x-fa fa-barcode' },
-                        { xtype: 'button', text: '장 인쇄', iconCls: 'x-fa fa-print' }
+                        { xtype: 'numberfield',width:40},
+                        { xtype: 'button', text: '장 인쇄'}
                     ]
                 },
 
                 // 3. 그리드 영역
                 {
                     xtype: 'grid',
-                    height: 250,
+                    height: 180,
                     width: '100%',
                     reference: 'partnerGrid',
                     store: {
@@ -131,13 +132,13 @@ Ext.define('DreamNalgae.view.wbas.wbas2001', {
                 // 거래처정보
                 {
                     xtype: 'form',
-                    title: '거래처 상세정보',
+                    //title: '거래처 상세정보',
                     width: '100%',
-                    bodyPadding: 10,
+                    bodyPadding: 1,
                     layout: {
                         type: 'table',
                         columns: 6,
-                        tdAttrs: { style: 'padding:4px;' }
+                        tdAttrs: { style: 'padding:1px;' }
                     },
                     defaults: {
                         xtype: 'textfield',
@@ -184,7 +185,7 @@ Ext.define('DreamNalgae.view.wbas.wbas2001', {
                         { fieldLabel: '우편번호', name: 'zip' },
                         { fieldLabel: '주소', name: 'addr' },
                         { fieldLabel: '상세주소', name: 'addrDetail' },
-                        { fieldLabel: 'PISS적용업체', name: 'pissCompany', colspan: 3, style: 'color:red;font-weight:bold;' },
+                        { fieldLabel: 'PISS적용업체', name: 'pissCompany', style: 'color:red;font-weight:bold;' },
                         { fieldLabel: '담당자', name: 'staffName' },
                         { fieldLabel: '출고', name: 'staffOut' },
                         { fieldLabel: '반품', name: 'staffReturn' },
