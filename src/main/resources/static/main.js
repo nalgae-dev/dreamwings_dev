@@ -5,6 +5,11 @@ Ext.Loader.setPath('DreamNalgae', 'app');
 // 2. 앱 시작
 Ext.application({
   name: 'DreamNalgae',
+  menuCache:{},
+  menuData:{},
+  clearMenuCache: function () {
+    this.menuCache = {};
+  },
   launch: function () {
     Ext.create('DreamNalgae.view.main.MainFrame');
   }

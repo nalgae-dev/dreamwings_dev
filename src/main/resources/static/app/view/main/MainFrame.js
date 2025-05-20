@@ -124,19 +124,18 @@ Ext.define('DreamNalgae.view.main.MainFrame', {
     afterrender: function () {
       const tree = this.down('#menuTree');
       const topTabPanel = this.down('#mainTopTabPanel');
-      const contentPanel = this.down('#mainContentPanel');
       const bottomTabBar = this.down('#bottomTabBar');
+
       bottomTabBar.on('tabchange', function (tabPanel, newTab) {
         const menuId = newTab.itemId;
         loadProgram(menuId);
       });
 
-      // 트리 노드 클릭 시
       tree.on('itemclick', function (view, record) {
         if (record.isLeaf()) {
-          const menuId = record.getId();         // 예: WINA1003
+          const menuId = record.getId();
           const menuNm = record.get('text');
-      
+
           let bottomTab = bottomTabBar.child('#' + menuId);
           if (!bottomTab) {
             bottomTab = bottomTabBar.add({
@@ -145,76 +144,52 @@ Ext.define('DreamNalgae.view.main.MainFrame', {
               closable: true,
               listeners: {
                 activate: function () {
-                  loadProgram(menuId); // ▶️ 여기서 실제 프로그램 로딩
+                  loadProgram(menuId);
                 }
               }
             });
           }
           bottomTabBar.setActiveTab(bottomTab);
-          loadProgram(menuId); // 최초 클릭 시에도 로딩
+          loadProgram(menuId);
         }
       });
 
-      // 상단 탭 (Level 1) 불러오기
       Ext.Ajax.request({
-        url: '/api/menu/tab',
-        success: function (response) {
-          const menus = Ext.decode(response.responseText);
+        url: '/api/menu/tree',
+        success: function (res) {
+          const temp_menus = Ext.decode(res.responseText);
+          const level1Menus = temp_menus[0].children;
 
-          menus.forEach(function (menu) {
+          level1Menus.forEach(function (menu) {
+            // ▶ 상단 탭 생성
             topTabPanel.add({
               title: menu.menuNm,
               itemId: menu.menuId,
               closable: false,
               listeners: {
                 activate: function () {
-                  Ext.Ajax.request({
-                    url: `/api/menu/sub/${menu.menuId}`,
-                    success: function (res) {
-                      const subMenus = Ext.decode(res.responseText);
-                      console.log(subMenus);
-                      const level2Menus = subMenus.filter(m => m.menuLevel === 2);
-                      const treeRoot = {
+                  const treeRoot = {
+                    expanded: true,
+                    children: (menu.children || []).map(function (level2) {
+                      return {
+                        text: level2.menuNm,
+                        id: level2.menuId,
                         expanded: true,
-                        children: []
+                        children: (level2.children || []).map(child => ({
+                          text: child.menuNm,
+                          id: child.menuId,
+                          leaf: true
+                        }))
                       };
-                      let loadedCount = 0;
-                      if (level2Menus.length === 0) {
-                        tree.setRootNode(treeRoot);
-                        return;
-                      }
-                      level2Menus.forEach(function (level2) {
-                        Ext.Ajax.request({
-                          url: `/api/menu/sub/${level2.menuId}`,
-                          success: function (res3) {
-                            const level3Menus = Ext.decode(res3.responseText)
-                              .filter(m => m.menuLevel === 3 && m.parentMenuId === level2.menuId);
-                            const children = level3Menus.map(child => ({
-                              text: child.menuNm,
-                              id: child.menuId,
-                              leaf: true
-                            }));
-                            treeRoot.children.push({
-                              text: level2.menuNm,
-                              id: level2.menuId,
-                              expanded: true,
-                              children: children
-                            });
-                            loadedCount++;
-                            if (loadedCount === level2Menus.length) {
-                              tree.setRootNode(treeRoot);
-                            }
-                          }
-                        });
-                      });
-                    }
-                  });
+                    })
+                  };
+                  tree.setRootNode(treeRoot);
                 }
               }
             });
           });
 
-          if (menus.length > 0) {
+          if (level1Menus.length > 0) {
             topTabPanel.setActiveTab(0);
             topTabPanel.items.items[0].fireEvent('activate');
           }
